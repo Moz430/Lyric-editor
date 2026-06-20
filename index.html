@@ -9,15 +9,15 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --ink:     #0d0c0a;
-      --paper:   #111009;
-      --warm:    #1a1812;
-      --amber:   #e8a640;
+      --ink:       #0d0c0a;
+      --paper:     #111009;
+      --warm:      #1a1812;
+      --amber:     #e8a640;
       --amber-dim: #7a5420;
-      --text:    #d4c9b0;
-      --muted:   #6b6254;
-      --line:    #2a2720;
-      --success: #5a8a5a;
+      --text:      #d4c9b0;
+      --muted:     #6b6254;
+      --line:      #2a2720;
+      --success:   #5a8a5a;
     }
 
     body {
@@ -66,10 +66,13 @@
       margin-bottom: 2rem;
     }
 
-    .notice strong {
-      color: var(--text);
-      font-weight: 500;
+    .notice strong { color: var(--text); font-weight: 500; }
+
+    .notice a {
+      color: var(--amber);
+      text-decoration: none;
     }
+    .notice a:hover { text-decoration: underline; }
 
     .panel {
       width: 100%;
@@ -103,14 +106,8 @@
       min-height: 220px;
     }
 
-    textarea:focus {
-      border-color: var(--amber-dim);
-    }
-
-    textarea::placeholder {
-      color: var(--muted);
-      font-style: italic;
-    }
+    textarea:focus { border-color: var(--amber-dim); }
+    textarea::placeholder { color: var(--muted); font-style: italic; }
 
     .focus-options {
       display: flex;
@@ -130,24 +127,16 @@
       letter-spacing: 0.03em;
     }
 
-    .chip:hover {
-      border-color: var(--amber-dim);
-      color: var(--text);
-    }
+    .chip:hover { border-color: var(--amber-dim); color: var(--text); }
+    .chip.active { background: var(--amber-dim); border-color: var(--amber-dim); color: #f5dca8; }
 
-    .chip.active {
-      background: var(--amber-dim);
-      border-color: var(--amber-dim);
-      color: #f5dca8;
-    }
-
-    .api-row {
+    .key-row {
       display: flex;
       gap: 0.75rem;
       align-items: center;
     }
 
-    .api-row input {
+    .key-row input {
       flex: 1;
       background: var(--warm);
       border: 1px solid var(--line);
@@ -159,13 +148,8 @@
       transition: border-color 0.2s;
     }
 
-    .api-row input:focus {
-      border-color: var(--amber-dim);
-    }
-
-    .api-row input::placeholder {
-      color: var(--muted);
-    }
+    .key-row input:focus { border-color: var(--amber-dim); }
+    .key-row input::placeholder { color: var(--muted); }
 
     button.run {
       background: var(--amber);
@@ -195,7 +179,6 @@
       line-height: 1.85;
       color: var(--text);
       white-space: pre-wrap;
-      position: relative;
     }
 
     .output-box.empty {
@@ -216,13 +199,10 @@
       min-height: 1rem;
     }
 
-    .status.error { color: #a05050; }
-    .status.ok    { color: var(--success); }
+    .status.error  { color: #a05050; }
+    .status.ok     { color: var(--success); }
 
-    .suggestion-line {
-      display: block;
-    }
-
+    .suggestion-line { display: block; }
     .suggestion-line.changed {
       color: #f5dca8;
       background: rgba(232, 166, 64, 0.07);
@@ -244,7 +224,7 @@
     }
 
     @media (max-width: 500px) {
-      .api-row { flex-direction: column; align-items: stretch; }
+      .key-row { flex-direction: column; align-items: stretch; }
       button.run { text-align: center; }
     }
   </style>
@@ -257,30 +237,29 @@
 </header>
 
 <div class="notice">
-  <strong>What this tool does:</strong> It only suggests edits to lines you've already written — improving flow, rhythm, rhyme, and word choice. It will not write new lines or replace your work. <strong>Your lyrics stay yours.</strong>
+  <strong>Free to use</strong> — powered by Google Gemini's free API tier. No credit card needed.<br>
+  Get your free key at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com/app/apikey</a> (sign in with Google, click "Create API key").<br><br>
+  <strong>What this does:</strong> Only suggests edits to lines you've written — no new lines added. <strong>Your lyrics stay yours.</strong>
 </div>
 
 <div class="panel">
 
-  <!-- API Key -->
   <div>
-    <label>Your Anthropic API Key</label>
-    <div class="api-row">
-      <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" />
+    <label>Google Gemini API Key (free)</label>
+    <div class="key-row">
+      <input type="password" id="apiKey" placeholder="AIza..." autocomplete="off" />
     </div>
     <div class="status" id="keyStatus"></div>
   </div>
 
-  <!-- Lyrics Input -->
   <div>
     <label>Your Lyrics</label>
     <textarea id="lyrics" placeholder="Paste your verse, chorus, or bridge here…" rows="10"></textarea>
   </div>
 
-  <!-- Focus Area -->
   <div>
     <label>Focus on</label>
-    <div class="focus-options" id="focusOptions">
+    <div class="focus-options">
       <button class="chip active" data-val="flow & rhythm">Flow & Rhythm</button>
       <button class="chip" data-val="rhyme scheme">Rhyme Scheme</button>
       <button class="chip" data-val="word choice & imagery">Word Choice</button>
@@ -289,13 +268,11 @@
     </div>
   </div>
 
-  <!-- Run -->
   <div>
     <button class="run" id="runBtn" onclick="getSuggestions()">Suggest Edits →</button>
     <div class="status" id="runStatus"></div>
   </div>
 
-  <!-- Output -->
   <div>
     <label>Edit Suggestions</label>
     <div class="output-box empty" id="output">Suggestions will appear here…</div>
@@ -304,7 +281,6 @@
 </div>
 
 <script>
-  // Chip selection
   document.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
       document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -326,7 +302,7 @@
     const out    = document.getElementById('output');
 
     if (!key) {
-      status.textContent = 'Add your Anthropic API key above.';
+      status.textContent = 'Add your Gemini API key above.';
       status.className = 'status error';
       return;
     }
@@ -350,12 +326,13 @@ Rules you must follow absolutely:
 1. NEVER write new lines from scratch. Only revise lines that exist.
 2. NEVER add verses, choruses, or sections that aren't in the input.
 3. For each line you suggest changing, show: the original → your suggested edit, plus a ONE sentence reason.
-4. If a line is already strong, say so briefly and leave it.
+4. If a line is already strong, say so and leave it alone.
 5. Focus your suggestions on: ${focus}.
 6. Keep the songwriter's voice, theme, and intent intact.
 7. End with a short (2–3 sentence) overall note on what's working well.
 
-Format:
+Format your response exactly like this:
+
 LINE-BY-LINE SUGGESTIONS
 [original line] → [suggested edit] — reason
 OR
@@ -365,29 +342,32 @@ WHAT'S WORKING
 [2–3 sentences]`;
 
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': key,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 1000,
-          system: systemPrompt,
-          messages: [{ role: 'user', content: `Here are my lyrics:\n\n${lyrics}` }]
-        })
-      });
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: systemPrompt }] },
+            contents: [{
+              role: 'user',
+              parts: [{ text: `Here are my lyrics:\n\n${lyrics}` }]
+            }],
+            generationConfig: { maxOutputTokens: 1000, temperature: 0.7 }
+          })
+        }
+      );
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.error?.message || `API error ${res.status}`);
+        const msg = err.error?.message || `API error ${res.status}`;
+        throw new Error(msg);
       }
 
       const data = await res.json();
-      const text = data.content.map(b => b.text || '').join('');
+      const text = data.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
+
+      if (!text) throw new Error('Empty response from Gemini.');
 
       out.className = 'output-box';
       out.innerHTML = formatOutput(text);
