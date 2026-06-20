@@ -386,15 +386,14 @@ Rules you must follow absolutely:
 7. Keep the songwriter's voice, theme, and intent intact.
 8. After ALL lines are addressed, end with a short (2–3 sentence) overall note on what's working well.
 
-Format your response exactly like this:
+Format (be concise, no blank lines between entries):
 
 LINE-BY-LINE SUGGESTIONS
 [original line] → [suggested edit] — reason
-OR
-[original line] ✓ (already strong)
+[original line] ✓ already strong
 
 WHAT'S WORKING
-[2–3 sentences]`;
+[2–3 sentences max]`;
 
     try {
       const res = await fetch(
@@ -408,7 +407,7 @@ WHAT'S WORKING
               role: 'user',
               parts: [{ text: `Here are my lyrics:\n\n${lyrics}` }]
             }],
-            generationConfig: { maxOutputTokens: 2000, temperature: 0.7 }
+            generationConfig: { maxOutputTokens: 4000, temperature: 0.7 }
           })
         }
       );
