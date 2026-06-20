@@ -305,6 +305,29 @@
 </div>
 
 <script>
+  // Load saved key on page open
+  const savedKey = localStorage.getItem('lyricflow_gemini_key');
+  if (savedKey) {
+    document.getElementById('apiKey').value = savedKey;
+    document.getElementById('rememberKey').checked = true;
+  }
+
+  function toggleRemember() {
+    const key = document.getElementById('apiKey').value.trim();
+    if (document.getElementById('rememberKey').checked) {
+      if (key) localStorage.setItem('lyricflow_gemini_key', key);
+    } else {
+      localStorage.removeItem('lyricflow_gemini_key');
+    }
+  }
+
+  // Save key whenever it changes, if remember is checked
+  document.getElementById('apiKey').addEventListener('input', () => {
+    if (document.getElementById('rememberKey').checked) {
+      localStorage.setItem('lyricflow_gemini_key', document.getElementById('apiKey').value.trim());
+    }
+  });
+
   document.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
       document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -367,10 +390,10 @@ WHAT'S WORKING
 
     try {
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
           body: JSON.stringify({
             system_instruction: { parts: [{ text: systemPrompt }] },
             contents: [{
