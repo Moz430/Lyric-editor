@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lyric Flow — Edit Suggestions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:     #0d0c0a;
+      --paper:   #111009;
+      --warm:    #1a1812;
+      --amber:   #e8a640;
+      --amber-dim: #7a5420;
+      --text:    #d4c9b0;
+      --muted:   #6b6254;
+      --line:    #2a2720;
+      --success: #5a8a5a;
+    }
+
+    body {
+      background: var(--paper);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    header {
+      width: 100%;
+      max-width: 720px;
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 1.25rem;
+    }
+
+    header h1 {
+      font-family: 'Special Elite', serif;
+      font-size: 1.6rem;
+      color: var(--amber);
+      letter-spacing: 0.04em;
+    }
+
+    header p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+      letter-spacing: 0.02em;
+    }
+
+    .notice {
+      width: 100%;
+      max-width: 720px;
+      background: var(--warm);
+      border-left: 3px solid var(--amber-dim);
+      padding: 0.75rem 1rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .notice strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .panel {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    textarea {
+      width: 100%;
+      background: var(--warm);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-family: 'Special Elite', serif;
+      font-size: 1rem;
+      line-height: 1.85;
+      padding: 1.25rem;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+      min-height: 220px;
+    }
+
+    textarea:focus {
+      border-color: var(--amber-dim);
+    }
+
+    textarea::placeholder {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .focus-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .chip {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      padding: 0.35rem 0.75rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.03em;
+    }
+
+    .chip:hover {
+      border-color: var(--amber-dim);
+      color: var(--text);
+    }
+
+    .chip.active {
+      background: var(--amber-dim);
+      border-color: var(--amber-dim);
+      color: #f5dca8;
+    }
+
+    .api-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .api-row input {
+      flex: 1;
+      background: var(--warm);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      padding: 0.6rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .api-row input:focus {
+      border-color: var(--amber-dim);
+    }
+
+    .api-row input::placeholder {
+      color: var(--muted);
+    }
+
+    button.run {
+      background: var(--amber);
+      color: var(--ink);
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.65rem 1.5rem;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+
+    button.run:hover { opacity: 0.85; }
+    button.run:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .output-box {
+      background: var(--warm);
+      border: 1px solid var(--line);
+      padding: 1.25rem;
+      min-height: 120px;
+      font-family: 'Special Elite', serif;
+      font-size: 0.97rem;
+      line-height: 1.85;
+      color: var(--text);
+      white-space: pre-wrap;
+      position: relative;
+    }
+
+    .output-box.empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-style: italic;
+    }
+
+    .status {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: right;
+      margin-top: 0.4rem;
+      min-height: 1rem;
+    }
+
+    .status.error { color: #a05050; }
+    .status.ok    { color: var(--success); }
+
+    .suggestion-line {
+      display: block;
+    }
+
+    .suggestion-line.changed {
+      color: #f5dca8;
+      background: rgba(232, 166, 64, 0.07);
+      padding: 0 2px;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--amber);
+      animation: pulse 1.2s ease-in-out infinite;
+      margin-right: 6px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.2; }
+    }
+
+    @media (max-width: 500px) {
+      .api-row { flex-direction: column; align-items: stretch; }
+      button.run { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Lyric Flow</h1>
+  <p>Paste your lyrics. Get edit suggestions — nothing written for you.</p>
+</header>
+
+<div class="notice">
+  <strong>What this tool does:</strong> It only suggests edits to lines you've already written — improving flow, rhythm, rhyme, and word choice. It will not write new lines or replace your work. <strong>Your lyrics stay yours.</strong>
+</div>
+
+<div class="panel">
+
+  <!-- API Key -->
+  <div>
+    <label>Your Anthropic API Key</label>
+    <div class="api-row">
+      <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" />
+    </div>
+    <div class="status" id="keyStatus"></div>
+  </div>
+
+  <!-- Lyrics Input -->
+  <div>
+    <label>Your Lyrics</label>
+    <textarea id="lyrics" placeholder="Paste your verse, chorus, or bridge here…" rows="10"></textarea>
+  </div>
+
+  <!-- Focus Area -->
+  <div>
+    <label>Focus on</label>
+    <div class="focus-options" id="focusOptions">
+      <button class="chip active" data-val="flow & rhythm">Flow & Rhythm</button>
+      <button class="chip" data-val="rhyme scheme">Rhyme Scheme</button>
+      <button class="chip" data-val="word choice & imagery">Word Choice</button>
+      <button class="chip" data-val="syllable count">Syllable Count</button>
+      <button class="chip" data-val="emotional impact">Emotional Impact</button>
+    </div>
+  </div>
+
+  <!-- Run -->
+  <div>
+    <button class="run" id="runBtn" onclick="getSuggestions()">Suggest Edits →</button>
+    <div class="status" id="runStatus"></div>
+  </div>
+
+  <!-- Output -->
+  <div>
+    <label>Edit Suggestions</label>
+    <div class="output-box empty" id="output">Suggestions will appear here…</div>
+  </div>
+
+</div>
+
+<script>
+  // Chip selection
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+
+  function getActiveChip() {
+    const active = document.querySelector('.chip.active');
+    return active ? active.dataset.val : 'flow & rhythm';
+  }
+
+  async function getSuggestions() {
+    const key    = document.getElementById('apiKey').value.trim();
+    const lyrics = document.getElementById('lyrics').value.trim();
+    const focus  = getActiveChip();
+    const btn    = document.getElementById('runBtn');
+    const status = document.getElementById('runStatus');
+    const out    = document.getElementById('output');
+
+    if (!key) {
+      status.textContent = 'Add your Anthropic API key above.';
+      status.className = 'status error';
+      return;
+    }
+    if (!lyrics) {
+      status.textContent = 'Paste some lyrics first.';
+      status.className = 'status error';
+      return;
+    }
+
+    btn.disabled = true;
+    status.className = 'status';
+    status.innerHTML = '<span class="dot"></span>Reading your lyrics…';
+    out.className = 'output-box';
+    out.innerHTML = '<span class="dot"></span> Thinking…';
+
+    const systemPrompt = `You are a lyric editor — not a co-writer.
+
+Your ONLY job is to suggest edits to lines the songwriter has already written.
+
+Rules you must follow absolutely:
+1. NEVER write new lines from scratch. Only revise lines that exist.
+2. NEVER add verses, choruses, or sections that aren't in the input.
+3. For each line you suggest changing, show: the original → your suggested edit, plus a ONE sentence reason.
+4. If a line is already strong, say so briefly and leave it.
+5. Focus your suggestions on: ${focus}.
+6. Keep the songwriter's voice, theme, and intent intact.
+7. End with a short (2–3 sentence) overall note on what's working well.
+
+Format:
+LINE-BY-LINE SUGGESTIONS
+[original line] → [suggested edit] — reason
+OR
+[original line] ✓ (already strong)
+
+WHAT'S WORKING
+[2–3 sentences]`;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1000,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: `Here are my lyrics:\n\n${lyrics}` }]
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error?.message || `API error ${res.status}`);
+      }
+
+      const data = await res.json();
+      const text = data.content.map(b => b.text || '').join('');
+
+      out.className = 'output-box';
+      out.innerHTML = formatOutput(text);
+      status.textContent = 'Done.';
+      status.className = 'status ok';
+
+    } catch (err) {
+      out.className = 'output-box empty';
+      out.textContent = 'Something went wrong. Check your API key and try again.';
+      status.textContent = err.message;
+      status.className = 'status error';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function formatOutput(text) {
+    return text
+      .split('\n')
+      .map(line => {
+        const escaped = line.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        if (escaped.includes('→')) {
+          return `<span class="suggestion-line changed">${escaped}</span>`;
+        }
+        return `<span class="suggestion-line">${escaped}</span>`;
+      })
+      .join('\n');
+  }
+</script>
+
+</body>
+</html>
