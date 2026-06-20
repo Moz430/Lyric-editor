@@ -174,12 +174,19 @@
       border: 1px solid var(--line);
       padding: 1.25rem;
       min-height: 120px;
+      max-height: 60vh;
+      overflow-y: auto;
       font-family: 'Special Elite', serif;
       font-size: 0.97rem;
       line-height: 1.85;
       color: var(--text);
       white-space: pre-wrap;
     }
+
+    .output-box { -webkit-overflow-scrolling: touch; }
+    .output-box::-webkit-scrollbar { width: 4px; }
+    .output-box::-webkit-scrollbar-track { background: var(--warm); }
+    .output-box::-webkit-scrollbar-thumb { background: var(--amber-dim); border-radius: 2px; }
 
     .output-box.empty {
       display: flex;
@@ -370,13 +377,14 @@
 Your ONLY job is to suggest edits to lines the songwriter has already written.
 
 Rules you must follow absolutely:
-1. NEVER write new lines from scratch. Only revise lines that exist.
-2. NEVER add verses, choruses, or sections that aren't in the input.
-3. For each line you suggest changing, show: the original → your suggested edit, plus a ONE sentence reason.
-4. If a line is already strong, say so and leave it alone.
-5. Focus your suggestions on: ${focus}.
-6. Keep the songwriter's voice, theme, and intent intact.
-7. End with a short (2–3 sentence) overall note on what's working well.
+1. Process EVERY SINGLE LINE in the input — do not skip any, do not stop early.
+2. NEVER write new lines from scratch. Only revise lines that exist.
+3. NEVER add verses, choruses, or sections that aren't in the input.
+4. For each line you suggest changing, show: the original → your suggested edit, plus a ONE sentence reason.
+5. If a line is already strong, mark it with ✓ and leave it alone.
+6. Focus your suggestions on: ${focus}.
+7. Keep the songwriter's voice, theme, and intent intact.
+8. After ALL lines are addressed, end with a short (2–3 sentence) overall note on what's working well.
 
 Format your response exactly like this:
 
@@ -400,7 +408,7 @@ WHAT'S WORKING
               role: 'user',
               parts: [{ text: `Here are my lyrics:\n\n${lyrics}` }]
             }],
-            generationConfig: { maxOutputTokens: 1000, temperature: 0.7 }
+            generationConfig: { maxOutputTokens: 2000, temperature: 0.7 }
           })
         }
       );
