@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lyric Flow — Suggest New Lines</title>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink: #0f0c17;
+      --paper: #14111d;
+      --warm: #1e1a29;
+      --accent: #e2637a;
+      --accent-dim: #6b3542;
+      --text: #e6dfd2;
+      --muted: #8a8296;
+      --line: #2c2536;
+      --success: #6fa88f;
+    }
+    body {
+      background: var(--paper);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+    header {
+      width: 100%;
+      max-width: 720px;
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 1.25rem;
+    }
+    header h1 {
+      font-family: 'Special Elite', serif;
+      font-size: 1.6rem;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+    }
+    header p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+      letter-spacing: 0.02em;
+    }
+    nav.pages {
+      display: flex;
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+    nav.pages a {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-decoration: none;
+      padding-bottom: 0.3rem;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    nav.pages a:hover { color: var(--text); }
+    nav.pages a.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .notice {
+      width: 100%;
+      max-width: 720px;
+      background: var(--warm);
+      border-left: 3px solid var(--accent-dim);
+      padding: 0.75rem 1rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+    .notice strong { color: var(--text); font-weight: 500; }
+    .notice a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .notice a:hover { text-decoration: underline; }
+    .panel {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    label {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    label .optional {
+      text-transform: none;
+      letter-spacing: 0;
+      font-style: italic;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      background: var(--warm);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-family: 'Special Elite', serif;
+      font-size: 1rem;
+      line-height: 1.85;
+      padding: 1.25rem;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    textarea { min-height: 160px; }
+    input[type="text"] { padding: 0.75rem 1rem; }
+    textarea:focus, input[type="text"]:focus { border-color: var(--accent-dim); }
+    textarea::placeholder, input::placeholder { color: var(--muted); font-style: italic; }
+    .focus-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .chip {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      padding: 0.35rem 0.75rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.03em;
+    }
+    .chip:hover { border-color: var(--accent-dim); color: var(--text); }
+    .chip.active { background: var(--accent-dim); border-color: var(--accent-dim); color: #f2cdd6; }
+    .field-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .field-row > div { flex: 1; min-width: 160px; }
+    select {
+      width: 100%;
+      background: var(--warm);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      padding: 0.65rem 0.9rem;
+      outline: none;
+      cursor: pointer;
+    }
+    select:focus { border-color: var(--accent-dim); }
+    .key-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .key-row input {
+      flex: 1;
+      background: var(--warm);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      padding: 0.6rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .key-row input:focus { border-color: var(--accent-dim); }
+    .key-row input::placeholder { color: var(--muted); }
+    button.run {
+      background: var(--accent);
+      color: var(--ink);
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.65rem 1.5rem;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    button.run:hover { opacity: 0.85; }
+    button.run:disabled { opacity: 0.4; cursor: not-allowed; }
+    .output-box {
+      background: var(--warm);
+      border: 1px solid var(--line);
+      padding: 1.25rem;
+      min-height: 120px;
+      max-height: 60vh;
+      overflow-y: auto;
+      font-family: 'Special Elite', serif;
+      font-size: 0.97rem;
+      line-height: 1.85;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+    .output-box { -webkit-overflow-scrolling: touch; }
+    .output-box::-webkit-scrollbar { width: 4px; }
+    .output-box::-webkit-scrollbar-track { background: var(--warm); }
+    .output-box::-webkit-scrollbar-thumb { background: var(--accent-dim); border-radius: 2px; }
+    .output-box.empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-style: italic;
+    }
+    .status {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: right;
+      margin-top: 0.4rem;
+      min-height: 1rem;
+    }
+    .status.error { color: #c1636f; }
+    .status.ok { color: var(--success); }
+    .suggestion-line { display: block; }
+    .suggestion-line.option-label {
+      color: var(--accent);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 1rem;
+    }
+    .suggestion-line.option-label:first-child { margin-top: 0; }
+    .suggestion-line.reason {
+      display: block;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      font-style: italic;
+      line-height: 1.6;
+      margin: 0.15rem 0 0.5rem 1rem;
+    }
+    .dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 1.2s ease-in-out infinite;
+      margin-right: 6px;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+    .remember-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .remember-row input[type="checkbox"] {
+      accent-color: var(--accent);
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+    .remember-row span {
+      font-size: 0.75rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    @media (max-width: 500px) {
+      .key-row { flex-direction: column; align-items: stretch; }
+      button.run { text-align: center; }
+      .field-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Lyric Flow</h1>
+  <p>Describe what you need. Get fresh lines to choose from, riff on, or ignore.</p>
+  <nav class="pages">
+    <a href="index.html">Edit Suggestions</a>
+    <a href="suggest.html" class="active">Suggest New Lines</a>
+  </nav>
+</header>
+<div class="notice">
+  <strong>Free to use</strong> — powered by Google Gemini's free API tier. No credit card needed.<br>
+  Get your free key at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com/app/apikey</a> (sign in with Google, click "Create API key").<br><br>
+  <strong>This mode is different:</strong> unlike Edit Suggestions, this page writes brand-new candidate lines for you to react to — treat them as raw material, not final lyrics.
+</div>
+<div class="panel">
+  <div>
+    <label>Google Gemini API Key (free)</label>
+    <div class="key-row">
+      <input type="password" id="apiKey" placeholder="AIza..." autocomplete="off" />
+    </div>
+    <div class="remember-row">
+      <input type="checkbox" id="rememberKey" onchange="toggleRemember()" />
+      <span onclick="document.getElementById('rememberKey').click()">Remember my key on this device</span>
+    </div>
+  </div>
+  <div>
+    <label>Existing lyrics <span class="optional">(optional — used to match your voice, rhyme scheme, and rhythm)</span></label>
+    <textarea id="context" placeholder="Paste any lines you already have, so new lines can match the style…" rows="6"></textarea>
+  </div>
+  <div>
+    <label>What do you need?</label>
+    <textarea id="brief" placeholder="e.g. 'A second verse about losing touch with an old friend' or 'One killer closing line for the bridge, something about letting go'" rows="4"></textarea>
+  </div>
+  <div class="field-row">
+    <div>
+      <label>Section</label>
+      <select id="section">
+        <option value="verse">Verse</option>
+        <option value="chorus">Chorus</option>
+        <option value="pre-chorus">Pre-Chorus</option>
+        <option value="bridge">Bridge</option>
+        <option value="hook / single line">Hook / Single Line</option>
+        <option value="outro">Outro</option>
+      </select>
+    </div>
+    <div>
+      <label>How many lines</label>
+      <select id="lineCount">
+        <option value="1">1 line</option>
+        <option value="2">2 lines</option>
+        <option value="4" selected>4 lines</option>
+        <option value="8">8 lines</option>
+      </select>
+    </div>
+  </div>
+  <div>
+    <label>Style leaning</label>
+    <div class="focus-options">
+      <button class="chip active" data-val="match my existing tone closely">Match My Tone</button>
+      <button class="chip" data-val="more raw and conversational">More Raw</button>
+      <button class="chip" data-val="more poetic and imagistic">More Poetic</button>
+      <button class="chip" data-val="punchier and more rhythmic">Punchier</button>
+      <button class="chip" data-val="darker and heavier">Darker</button>
+    </div>
+  </div>
+  <div>
+    <button class="run" id="runBtn" onclick="getNewLines()">Suggest Lines →</button>
+    <div class="status" id="runStatus"></div>
+  </div>
+  <div>
+    <label>New Line Options</label>
+    <div class="output-box empty" id="output">Suggestions will appear here…</div>
+  </div>
+</div>
+<script>
+  const savedKey = localStorage.getItem('lyricflow_gemini_key');
+  if (savedKey) {
+    document.getElementById('apiKey').value = savedKey;
+    document.getElementById('rememberKey').checked = true;
+  }
+  function toggleRemember() {
+    const key = document.getElementById('apiKey').value.trim();
+    if (document.getElementById('rememberKey').checked) {
+      if (key) localStorage.setItem('lyricflow_gemini_key', key);
+    } else {
+      localStorage.removeItem('lyricflow_gemini_key');
+    }
+  }
+  document.getElementById('apiKey').addEventListener('input', () => {
+    if (document.getElementById('rememberKey').checked) {
+      localStorage.setItem('lyricflow_gemini_key', document.getElementById('apiKey').value.trim());
+    }
+  });
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+  function getActiveChip() {
+    const active = document.querySelector('.chip.active');
+    return active ? active.dataset.val : 'match my existing tone closely';
+  }
+  async function getNewLines() {
+    const key = document.getElementById('apiKey').value.trim();
+    const context = document.getElementById('context').value.trim();
+    const brief = document.getElementById('brief').value.trim();
+    const section = document.getElementById('section').value;
+    const lineCount = document.getElementById('lineCount').value;
+    const style = getActiveChip();
+    const btn = document.getElementById('runBtn');
+    const status = document.getElementById('runStatus');
+    const out = document.getElementById('output');
+
+    if (!key) {
+      status.textContent = 'Add your Gemini API key above.';
+      status.className = 'status error';
+      return;
+    }
+    if (!brief) {
+      status.textContent = 'Tell it what you need first.';
+      status.className = 'status error';
+      return;
+    }
+
+    btn.disabled = true;
+    status.className = 'status';
+    status.innerHTML = '<span class="dot"></span>Drafting options…';
+    out.className = 'output-box';
+    out.innerHTML = '<span class="dot"></span> Writing…';
+
+    const systemPrompt = `You are a songwriting collaborator generating NEW candidate lines — this is the one mode where you're allowed to write original material, unlike a pure editor.
+
+Rules you must follow absolutely:
+1. Write exactly 3 distinct options/sets, each containing ${lineCount} line(s) for a ${section}.
+2. If existing lyrics are provided as context, match their voice, tone, rhyme scheme, and syllable rhythm closely — the new lines must sound like they belong in the same song.
+3. If no existing lyrics are provided, invent a consistent voice based on the brief alone.
+4. Lean the writing style toward: ${style}.
+5. Make the 3 options meaningfully different from each other (e.g. different angle, imagery, or phrasing choice) rather than minor variations of the same line.
+6. After each option, add a short (1-2 sentence) note on the choice you made and why it might fit — e.g. what imagery or rhyme it leans on.
+7. These are drafts for the songwriter to react to, riff on, rewrite, or discard — make that spirit clear, don't present them as finished/final lines.
+8. Do not add commentary about AI, disclaimers, or anything outside the requested format.
+
+Format exactly like this:
+OPTION 1
+[line(s)]
+Note: [1-2 sentence note]
+
+OPTION 2
+[line(s)]
+Note: [1-2 sentence note]
+
+OPTION 3
+[line(s)]
+Note: [1-2 sentence note]`;
+
+    const userMessage = `Section needed: ${section}
+Number of lines: ${lineCount}
+Brief: ${brief}
+${context ? `\nExisting lyrics for style reference:\n${context}` : '\n(No existing lyrics provided — invent a consistent voice from the brief.)'}`;
+
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: systemPrompt }] },
+            contents: [{
+              role: 'user',
+              parts: [{ text: userMessage }]
+            }],
+            generationConfig: { maxOutputTokens: 6000, temperature: 0.9 }
+          })
+        }
+      );
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        const msg = err.error?.message || `API error ${res.status}`;
+        throw new Error(msg);
+      }
+
+      const data = await res.json();
+      const text = data.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
+      if (!text) throw new Error('Empty response from Gemini.');
+
+      out.className = 'output-box';
+      out.innerHTML = formatOutput(text);
+      status.textContent = 'Done.';
+      status.className = 'status ok';
+    } catch (err) {
+      out.className = 'output-box empty';
+      out.textContent = 'Something went wrong. Check your API key and try again.';
+      status.textContent = err.message;
+      status.className = 'status error';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function formatOutput(text) {
+    return text
+      .split('\n')
+      .map(line => {
+        const escaped = line.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        if (/^OPTION \d+/i.test(escaped.trim())) {
+          return `<span class="suggestion-line option-label">${escaped.trim()}</span>`;
+        }
+        if (/^\s*Note:/i.test(escaped)) {
+          return `<span class="suggestion-line reason">${escaped.trim()}</span>`;
+        }
+        return `<span class="suggestion-line">${escaped}</span>`;
+      })
+      .join('\n');
+  }
+</script>
+</body>
+</html>
