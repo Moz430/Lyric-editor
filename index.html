@@ -7,19 +7,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --ink:       #0d0c0a;
-      --paper:     #111009;
-      --warm:      #1a1812;
-      --amber:     #e8a640;
-      --amber-dim: #7a5420;
-      --text:      #d4c9b0;
-      --muted:     #6b6254;
-      --line:      #2a2720;
-      --success:   #5a8a5a;
+      --ink: #0f0c17;
+      --paper: #14111d;
+      --warm: #1e1a29;
+      --accent: #e2637a;
+      --accent-dim: #6b3542;
+      --text: #e6dfd2;
+      --muted: #8a8296;
+      --line: #2c2536;
+      --success: #6fa88f;
     }
-
     body {
       background: var(--paper);
       color: var(--text);
@@ -31,7 +29,6 @@
       align-items: center;
       padding: 2rem 1rem 4rem;
     }
-
     header {
       width: 100%;
       max-width: 720px;
@@ -39,41 +36,55 @@
       border-bottom: 1px solid var(--line);
       padding-bottom: 1.25rem;
     }
-
     header h1 {
       font-family: 'Special Elite', serif;
       font-size: 1.6rem;
-      color: var(--amber);
+      color: var(--accent);
       letter-spacing: 0.04em;
     }
-
     header p {
       font-size: 0.8rem;
       color: var(--muted);
       margin-top: 0.35rem;
       letter-spacing: 0.02em;
     }
-
+    nav.pages {
+      display: flex;
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+    nav.pages a {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-decoration: none;
+      padding-bottom: 0.3rem;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    nav.pages a:hover { color: var(--text); }
+    nav.pages a.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
     .notice {
       width: 100%;
       max-width: 720px;
       background: var(--warm);
-      border-left: 3px solid var(--amber-dim);
+      border-left: 3px solid var(--accent-dim);
       padding: 0.75rem 1rem;
       font-size: 0.78rem;
       color: var(--muted);
       line-height: 1.6;
       margin-bottom: 2rem;
     }
-
     .notice strong { color: var(--text); font-weight: 500; }
-
     .notice a {
-      color: var(--amber);
+      color: var(--accent);
       text-decoration: none;
     }
     .notice a:hover { text-decoration: underline; }
-
     .panel {
       width: 100%;
       max-width: 720px;
@@ -81,7 +92,6 @@
       flex-direction: column;
       gap: 1.5rem;
     }
-
     label {
       display: block;
       font-size: 0.72rem;
@@ -90,7 +100,6 @@
       color: var(--muted);
       margin-bottom: 0.5rem;
     }
-
     textarea {
       width: 100%;
       background: var(--warm);
@@ -105,16 +114,13 @@
       transition: border-color 0.2s;
       min-height: 220px;
     }
-
-    textarea:focus { border-color: var(--amber-dim); }
+    textarea:focus { border-color: var(--accent-dim); }
     textarea::placeholder { color: var(--muted); font-style: italic; }
-
     .focus-options {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
     }
-
     .chip {
       background: transparent;
       border: 1px solid var(--line);
@@ -126,16 +132,13 @@
       transition: all 0.15s;
       letter-spacing: 0.03em;
     }
-
-    .chip:hover { border-color: var(--amber-dim); color: var(--text); }
-    .chip.active { background: var(--amber-dim); border-color: var(--amber-dim); color: #f5dca8; }
-
+    .chip:hover { border-color: var(--accent-dim); color: var(--text); }
+    .chip.active { background: var(--accent-dim); border-color: var(--accent-dim); color: #f2cdd6; }
     .key-row {
       display: flex;
       gap: 0.75rem;
       align-items: center;
     }
-
     .key-row input {
       flex: 1;
       background: var(--warm);
@@ -147,12 +150,10 @@
       outline: none;
       transition: border-color 0.2s;
     }
-
-    .key-row input:focus { border-color: var(--amber-dim); }
+    .key-row input:focus { border-color: var(--accent-dim); }
     .key-row input::placeholder { color: var(--muted); }
-
     button.run {
-      background: var(--amber);
+      background: var(--accent);
       color: var(--ink);
       border: none;
       font-family: 'Inter', sans-serif;
@@ -165,10 +166,8 @@
       transition: opacity 0.15s;
       white-space: nowrap;
     }
-
     button.run:hover { opacity: 0.85; }
     button.run:disabled { opacity: 0.4; cursor: not-allowed; }
-
     .output-box {
       background: var(--warm);
       border: 1px solid var(--line);
@@ -182,12 +181,10 @@
       color: var(--text);
       white-space: pre-wrap;
     }
-
     .output-box { -webkit-overflow-scrolling: touch; }
     .output-box::-webkit-scrollbar { width: 4px; }
     .output-box::-webkit-scrollbar-track { background: var(--warm); }
-    .output-box::-webkit-scrollbar-thumb { background: var(--amber-dim); border-radius: 2px; }
-
+    .output-box::-webkit-scrollbar-thumb { background: var(--accent-dim); border-radius: 2px; }
     .output-box.empty {
       display: flex;
       align-items: center;
@@ -197,7 +194,6 @@
       font-size: 0.8rem;
       font-style: italic;
     }
-
     .status {
       font-size: 0.75rem;
       color: var(--muted);
@@ -205,51 +201,52 @@
       margin-top: 0.4rem;
       min-height: 1rem;
     }
-
-    .status.error  { color: #a05050; }
-    .status.ok     { color: var(--success); }
-
+    .status.error { color: #c1636f; }
+    .status.ok { color: var(--success); }
     .suggestion-line { display: block; }
     .suggestion-line.changed {
-      color: #f5dca8;
-      background: rgba(232, 166, 64, 0.07);
+      color: #f2cdd6;
+      background: rgba(226, 99, 122, 0.09);
       padding: 0 2px;
     }
-
+    .suggestion-line.reason {
+      display: block;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      font-style: italic;
+      line-height: 1.6;
+      margin: 0.15rem 0 0.5rem 1rem;
+    }
     .dot {
       display: inline-block;
       width: 6px; height: 6px;
       border-radius: 50%;
-      background: var(--amber);
+      background: var(--accent);
       animation: pulse 1.2s ease-in-out infinite;
       margin-right: 6px;
     }
-
     @keyframes pulse {
       0%, 100% { opacity: 1; }
-      50%       { opacity: 0.2; }
+      50% { opacity: 0.2; }
     }
-
     .remember-row {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       margin-top: 0.5rem;
     }
-
     .remember-row input[type="checkbox"] {
-      accent-color: var(--amber);
+      accent-color: var(--accent);
       width: 14px;
       height: 14px;
       cursor: pointer;
     }
-
     .remember-row span {
       font-size: 0.75rem;
       color: var(--muted);
       cursor: pointer;
     }
-
     @media (max-width: 500px) {
       .key-row { flex-direction: column; align-items: stretch; }
       button.run { text-align: center; }
@@ -257,20 +254,20 @@
   </style>
 </head>
 <body>
-
 <header>
   <h1>Lyric Flow</h1>
   <p>Paste your lyrics. Get edit suggestions — nothing written for you.</p>
+  <nav class="pages">
+    <a href="index.html" class="active">Edit Suggestions</a>
+    <a href="suggest.html">Suggest New Lines</a>
+  </nav>
 </header>
-
 <div class="notice">
   <strong>Free to use</strong> — powered by Google Gemini's free API tier. No credit card needed.<br>
   Get your free key at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com/app/apikey</a> (sign in with Google, click "Create API key").<br><br>
   <strong>What this does:</strong> Only suggests edits to lines you've written — no new lines added. <strong>Your lyrics stay yours.</strong>
 </div>
-
 <div class="panel">
-
   <div>
     <label>Google Gemini API Key (free)</label>
     <div class="key-row">
@@ -282,12 +279,10 @@
     </div>
     <div class="status" id="keyStatus"></div>
   </div>
-
   <div>
     <label>Your Lyrics</label>
     <textarea id="lyrics" placeholder="Paste your verse, chorus, or bridge here…" rows="10"></textarea>
   </div>
-
   <div>
     <label>Focus on</label>
     <div class="focus-options">
@@ -298,19 +293,15 @@
       <button class="chip" data-val="emotional impact">Emotional Impact</button>
     </div>
   </div>
-
   <div>
     <button class="run" id="runBtn" onclick="getSuggestions()">Suggest Edits →</button>
     <div class="status" id="runStatus"></div>
   </div>
-
   <div>
     <label>Edit Suggestions</label>
     <div class="output-box empty" id="output">Suggestions will appear here…</div>
   </div>
-
 </div>
-
 <script>
   // Load saved key on page open
   const savedKey = localStorage.getItem('lyricflow_gemini_key');
@@ -318,7 +309,6 @@
     document.getElementById('apiKey').value = savedKey;
     document.getElementById('rememberKey').checked = true;
   }
-
   function toggleRemember() {
     const key = document.getElementById('apiKey').value.trim();
     if (document.getElementById('rememberKey').checked) {
@@ -327,34 +317,29 @@
       localStorage.removeItem('lyricflow_gemini_key');
     }
   }
-
   // Save key whenever it changes, if remember is checked
   document.getElementById('apiKey').addEventListener('input', () => {
     if (document.getElementById('rememberKey').checked) {
       localStorage.setItem('lyricflow_gemini_key', document.getElementById('apiKey').value.trim());
     }
   });
-
   document.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
       document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
     });
   });
-
   function getActiveChip() {
     const active = document.querySelector('.chip.active');
     return active ? active.dataset.val : 'flow & rhythm';
   }
-
   async function getSuggestions() {
-    const key    = document.getElementById('apiKey').value.trim();
+    const key = document.getElementById('apiKey').value.trim();
     const lyrics = document.getElementById('lyrics').value.trim();
-    const focus  = getActiveChip();
-    const btn    = document.getElementById('runBtn');
+    const focus = getActiveChip();
+    const btn = document.getElementById('runBtn');
     const status = document.getElementById('runStatus');
-    const out    = document.getElementById('output');
-
+    const out = document.getElementById('output');
     if (!key) {
       status.textContent = 'Add your Gemini API key above.';
       status.className = 'status error';
@@ -365,36 +350,32 @@
       status.className = 'status error';
       return;
     }
-
     btn.disabled = true;
     status.className = 'status';
     status.innerHTML = '<span class="dot"></span>Reading your lyrics…';
     out.className = 'output-box';
     out.innerHTML = '<span class="dot"></span> Thinking…';
-
     const systemPrompt = `You are a lyric editor — not a co-writer.
-
 Your ONLY job is to suggest edits to lines the songwriter has already written.
-
 Rules you must follow absolutely:
 1. Process EVERY SINGLE LINE in the input — do not skip any, do not stop early.
 2. NEVER write new lines from scratch. Only revise lines that exist.
 3. NEVER add verses, choruses, or sections that aren't in the input.
-4. For each line you suggest changing, show: the original → your suggested edit, plus a ONE sentence reason.
+4. For each line you suggest changing, show: the original → your suggested edit, followed by a fuller explanation (2–4 sentences) of why the change helps — cover things like rhythm, sound, imagery, or emotional effect where relevant, not just a one-line reason.
 5. If a line is already strong, mark it with ✓ and leave it alone.
 6. Focus your suggestions on: ${focus}.
 7. Keep the songwriter's voice, theme, and intent intact.
-8. After ALL lines are addressed, end with a short (2–3 sentence) overall note on what's working well.
+8. After ALL lines are addressed, end with a short (4–6 sentence) overall note on what's working well and any bigger-picture patterns you noticed across the piece.
 
-Format (be concise, no blank lines between entries):
-
+Format (be concise but thorough, one blank line between entries so longer explanations stay readable):
 LINE-BY-LINE SUGGESTIONS
-[original line] → [suggested edit] — reason
+[original line] → [suggested edit]
+   Reason: [2–4 sentence explanation]
+
 [original line] ✓ already strong
 
 WHAT'S WORKING
-[2–3 sentences max]`;
-
+[4–6 sentences]`;
     try {
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent`,
@@ -407,27 +388,22 @@ WHAT'S WORKING
               role: 'user',
               parts: [{ text: `Here are my lyrics:\n\n${lyrics}` }]
             }],
-            generationConfig: { maxOutputTokens: 4000, temperature: 0.7 }
+            generationConfig: { maxOutputTokens: 8000, temperature: 0.7 }
           })
         }
       );
-
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         const msg = err.error?.message || `API error ${res.status}`;
         throw new Error(msg);
       }
-
       const data = await res.json();
       const text = data.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
-
       if (!text) throw new Error('Empty response from Gemini.');
-
       out.className = 'output-box';
       out.innerHTML = formatOutput(text);
       status.textContent = 'Done.';
       status.className = 'status ok';
-
     } catch (err) {
       out.className = 'output-box empty';
       out.textContent = 'Something went wrong. Check your API key and try again.';
@@ -437,12 +413,14 @@ WHAT'S WORKING
       btn.disabled = false;
     }
   }
-
   function formatOutput(text) {
     return text
       .split('\n')
       .map(line => {
         const escaped = line.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        if (/^\s*Reason:/i.test(escaped)) {
+          return `<span class="suggestion-line reason">${escaped.trim()}</span>`;
+        }
         if (escaped.includes('→')) {
           return `<span class="suggestion-line changed">${escaped}</span>`;
         }
@@ -451,6 +429,5 @@ WHAT'S WORKING
       .join('\n');
   }
 </script>
-
 </body>
 </html>
